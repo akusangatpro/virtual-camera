@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Kamera</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        video {
+            border: 1px solid #ccc;
+            width: 100%;
+            max-width: 600px;
+        }
+        button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Aplikasi Kamera Sederhana</h1>
+    <video id="video" autoplay></video>
+    <button id="snap">Ambil Foto</button>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <a id="download" style="display:none;">Unduh Foto</a>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const downloadLink = document.getElementById('download');
+
+        // Mengakses kamera
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("Error accessing camera: ", err);
+            });
+
+        // Mengambil foto
+        document.getElementById('snap').addEventListener('click', () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0);
+            const dataUrl = canvas.toDataURL('image/png');
+            downloadLink.href = dataUrl;
+            downloadLink.download = 'foto.png';
+            downloadLink.style.display = 'block';
+            downloadLink.innerText = 'Unduh Foto';
+        });
+    </script>
+</body>
+</html>
